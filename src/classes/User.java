@@ -14,18 +14,20 @@ public class User {
     private BigDecimal balance;
     private UserType userType;
     private Car car;
+    private String password;
     private boolean isAvailable = true;
 
     public User(){
 
     }
-    public User(UUID id, String fullName, String phoneNumber, BigDecimal balance, UserType userType, Car car) {
+    public User(UUID id, String fullName, String phoneNumber, BigDecimal balance, UserType userType, Car car, String password) {
         this.id = id;
         this.fullName = fullName;
         this.phoneNumber = phoneNumber;
         this.balance = balance;
         this.userType = userType;
         this.car = car;
+        this.password = password;
     }
 
     public UUID getId() {
@@ -82,5 +84,13 @@ public class User {
 
     public void setAvailable(boolean available) {
         isAvailable = available;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
