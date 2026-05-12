@@ -55,7 +55,6 @@ public class AuthServiceImpl implements AuthService {
     }
     private User getUserByPhoneNumber(String phoneNumber){
         for (User user : usersDatabase) {
-            System.out.println(user.getPhoneNumber());
             if(user.getPhoneNumber().equals(phoneNumber)){
                 return user;
             }

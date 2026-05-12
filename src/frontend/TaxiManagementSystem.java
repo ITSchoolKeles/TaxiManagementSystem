@@ -38,7 +38,6 @@ public class TaxiManagementSystem {
 
 
 
-        System.out.println("Bizning taksi loyihamizga xush kelibsiz");
         while (true){
         displayAuthentificationMenus();
         int menuNumber = getMenuNumberInSafeWay("Menu raqamini kiriting");
@@ -54,10 +53,14 @@ public class TaxiManagementSystem {
         System.out.println("Bu login sahifasi");
     }
     public static void register(){
-        System.out.println("Bu ro'yxatdan o'tish sahifasi");
+        System.out.println("------------------------------------------");
+        System.out.println("|     Bu ro'yxatdan o'tish sahifasi      |");
+        System.out.println("------------------------------------------");
+        System.out.println();
         System.out.println("1.USER");
         System.out.println("2.DRIVER");
         System.out.println("3.Asosiy menuga qaytish");
+        System.out.println();
         int roleMenuNumber = getMenuNumberInSafeWay("Role ni tanlang");
 
         switch (roleMenuNumber){
@@ -70,10 +73,12 @@ public class TaxiManagementSystem {
     }
 
     private static void registerUser() {
-        System.out.println("Bu userni ro'yxatdan o'tkazish menusi ");
-        System.out.println("-----------------------------");
+        System.out.println("-------------------------------------------");
+        System.out.println("|  Bu userni ro'yxatdan o'tkazish menusi  |");
+        System.out.println("-------------------------------------------");
         // USER --> fullName, phoneNumber,password
 
+        System.out.println();
         System.out.print("To'liq ismingizni kiriting -> ");
         String fullName = textScanner.nextLine();
 
@@ -101,16 +106,48 @@ public class TaxiManagementSystem {
 
     }
     public static void registerDriver() {
-        System.out.println("Bu driverni ro'yxatdan o'tkasiz menusi");
+        System.out.println("-------------------------------------------");
+        System.out.println("|  Bu driverni ro'yxatdan o'tkasiz menusi |");
+        System.out.println("-------------------------------------------");
+        System.out.println();
+
+        System.out.print("To'liq ismingizni kiriting -> ");
+        String fullName = textScanner.nextLine();
+
+        System.out.print("Telefon raqamingizni kiriting -> ");
+        String phoneNumber = textScanner.nextLine();
+
+        System.out.print("Parolni kiriting (kamida 6 ta bolishi kerak)");
+        String password = textScanner.nextLine();
+
+        User newUser = new User();
+        newUser.setFullName(fullName);
+        newUser.setPhoneNumber(phoneNumber);
+        newUser.setUserType(UserType.DRIVER);
+        newUser.setBalance(BigDecimal.valueOf(0));
+        newUser.setPassword(password);
+
+        try{
+            currentUser =  authService.register(newUser);
+        }catch (InvalidInputException | DataAlreadyException e){
+            System.err.println(e.getMessage());
+            return;
+        }
+        System.out.println("-------------------------------------------");
+        System.out.println("|  Registratsiya muvaffaqqiyatli tugadi   |");
+        System.out.println("-------------------------------------------");
+        System.out.println();
 
         // USerni register pagei bilan bir xil bo'ladi va faqat car tanlash qoshimcha menu qoshiladi
     }
 
     public static void displayAuthentificationMenus(){
-        System.out.println("-----------------------------------------");
+        System.out.println("Bizning taksi loyihamizga xush kelibsiz");
+        System.out.println("-------------------------------------------");
         System.out.println("1. Login");
-        System.out.println("2.Register");
+        System.out.println("2. Register");
         System.out.println("3. Exit");
+        System.out.println();
     }
     private static int getMenuNumber(String message){
 
