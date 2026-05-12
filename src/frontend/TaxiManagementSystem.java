@@ -1,6 +1,7 @@
 package frontend;
 
 import classes.User;
+import enums.Car;
 import enums.UserType;
 import exceptions.DataAlreadyException;
 import exceptions.FormatException;
@@ -13,10 +14,11 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class TaxiManagementSystem {
-    private  static final Scanner numberScanner = new Scanner(System.in);
-    private  static final Scanner textScanner = new Scanner(System.in);
+    private static final Scanner numberScanner = new Scanner(System.in);
+    private static final Scanner textScanner = new Scanner(System.in);
     private static final AuthService authService = new AuthServiceImpl();
     private static User currentUser = null;
+
     public static void main(String[] args) {
         // 1. Authentification ==> register/ login
         // Dashboards ==> admin, user, driver
@@ -37,22 +39,23 @@ public class TaxiManagementSystem {
         // Login --> phoneNumber password
 
 
-
-        while (true){
-        displayAuthentificationMenus();
-        int menuNumber = getMenuNumberInSafeWay("Menu raqamini kiriting");
-        switch (menuNumber) {
-            case 1 -> login();
-            case 2 -> register();
-            case 3 -> System.exit(0);
-        }
+        while (true) {
+            displayAuthentificationMenus();
+            int menuNumber = getMenuNumberInSafeWay("Menu raqamini kiriting");
+            switch (menuNumber) {
+                case 1 -> login();
+                case 2 -> register();
+                case 3 -> System.exit(0);
+            }
         }
 
     }
-    public static void login(){
+
+    public static void login() {
         System.out.println("Bu login sahifasi");
     }
-    public static void register(){
+
+    public static void register() {
         System.out.println("------------------------------------------");
         System.out.println("|     Bu ro'yxatdan o'tish sahifasi      |");
         System.out.println("------------------------------------------");
@@ -63,9 +66,9 @@ public class TaxiManagementSystem {
         System.out.println();
         int roleMenuNumber = getMenuNumberInSafeWay("Role ni tanlang");
 
-        switch (roleMenuNumber){
-            case 1-> registerUser();
-            case 2-> registerDriver();
+        switch (roleMenuNumber) {
+            case 1 -> registerUser();
+            case 2 -> registerDriver();
             case 3 -> {
                 return;
             }
@@ -95,16 +98,17 @@ public class TaxiManagementSystem {
         newUser.setBalance(BigDecimal.valueOf(10000000));
         newUser.setPassword(password);
 
-       try{
-         currentUser =  authService.register(newUser);
-       }catch (InvalidInputException | DataAlreadyException e){
-           System.err.println(e.getMessage());
-           return;
-       }
+        try {
+            currentUser = authService.register(newUser);
+        } catch (InvalidInputException | DataAlreadyException e) {
+            System.err.println(e.getMessage());
+            return;
+        }
         System.out.println("Registratsiya muvaffaqqiyatli tugadi");
 
 
     }
+
     public static void registerDriver() {
         System.out.println("-------------------------------------------");
         System.out.println("|  Bu driverni ro'yxatdan o'tkasiz menusi |");
@@ -120,16 +124,21 @@ public class TaxiManagementSystem {
         System.out.print("Parolni kiriting (kamida 6 ta bolishi kerak)");
         String password = textScanner.nextLine();
 
-        User newUser = new User();
-        newUser.setFullName(fullName);
-        newUser.setPhoneNumber(phoneNumber);
-        newUser.setUserType(UserType.DRIVER);
-        newUser.setBalance(BigDecimal.valueOf(0));
-        newUser.setPassword(password);
 
-        try{
-            currentUser =  authService.register(newUser);
-        }catch (InvalidInputException | DataAlreadyException e){
+        // Car tanlash
+
+        Car driverCar = chooseCar();
+
+        User newDriver = new User();
+        newDriver.setFullName(fullName);
+        newDriver.setPhoneNumber(phoneNumber);
+        newDriver.setUserType(UserType.DRIVER);
+        newDriver.setBalance(BigDecimal.valueOf(0));
+        newDriver.setPassword(password);
+        newDriver.setCar(driverCar);
+        try {
+            currentUser = authService.register(newDriver);
+        } catch (InvalidInputException | DataAlreadyException e) {
             System.err.println(e.getMessage());
             return;
         }
@@ -141,7 +150,7 @@ public class TaxiManagementSystem {
         // USerni register pagei bilan bir xil bo'ladi va faqat car tanlash qoshimcha menu qoshiladi
     }
 
-    public static void displayAuthentificationMenus(){
+    public static void displayAuthentificationMenus() {
         System.out.println("Bizning taksi loyihamizga xush kelibsiz");
         System.out.println("-------------------------------------------");
         System.out.println("1. Login");
@@ -149,13 +158,14 @@ public class TaxiManagementSystem {
         System.out.println("3. Exit");
         System.out.println();
     }
-    private static int getMenuNumber(String message){
+
+    private static int getMenuNumber(String message) {
 
         int menuNumber;
         try {
             Thread.sleep(500);
             System.out.print(message + " => ");
-             menuNumber = numberScanner.nextInt();
+            menuNumber = numberScanner.nextInt();
         } catch (InputMismatchException e) {
             throw new FormatException("Iltimos raqam kiriting");
         } catch (InterruptedException e) {
@@ -163,7 +173,8 @@ public class TaxiManagementSystem {
         }
         return menuNumber;
     }
-    private static int getMenuNumberInSafeWay(String message){
+
+    private static int getMenuNumberInSafeWay(String message) {
         boolean isFormatException = true;
         int menuNumber = 0;
         while (isFormatException) {
@@ -178,4 +189,12 @@ public class TaxiManagementSystem {
         return menuNumber;
     }
 
+    public static Car chooseCar() {
+        Car[] cars = Car.values();
+        for (int i = 0; i < cars.length; i++) {
+            System.out.println((i + 1) + ". " + cars[i]);
+        }
+        int chooseYourCar = getMenuNumber("Choose your car ");
+        return cars[chooseYourCar - 1];
+    }
 }
