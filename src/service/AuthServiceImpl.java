@@ -4,6 +4,7 @@ import classes.User;
 import enums.UserType;
 import exceptions.DataAlreadyException;
 import exceptions.InvalidInputException;
+import exceptions.LoginException;
 import interfaces.AuthService;
 import utils.Database;
 
@@ -27,7 +28,22 @@ public class AuthServiceImpl implements AuthService {
     }
     @Override
     public User login(String phoneNumber, String password) {
-        return null;
+        if(!phoneNumber.startsWith("+998") || phoneNumber.length() != 13){
+            throw new InvalidInputException("Telefon raqam +998 dan boshlanishi va uzunligi 13 ta bolishi kerak");
+        }
+        if(password.length() < 6){
+            throw new InvalidInputException("Parol uzunligi kamida 6 ta belgidan iborat bolishi kerak");
+        }
+        User userByPhoneNumber = getUserByPhoneNumber(phoneNumber);
+
+        if(userByPhoneNumber == null){
+           throw new LoginException("Bunday telefon raqamli foydalanuvchi mavjud emas");
+        }
+        if(!userByPhoneNumber.getPassword().equals(password)){
+            throw new LoginException("Parol xato kiritildi");
+        }
+
+        return userByPhoneNumber;
     }
 
     @Override
@@ -35,8 +51,8 @@ public class AuthServiceImpl implements AuthService {
         if(user.getFullName().length() < 3){
             throw new InvalidInputException("To'liq ism kamida 3 ta belgidan iborat bo'lishi kerak");
         }
-        if(!user.getPhoneNumber().startsWith("+998") && user.getPhoneNumber().length() != 11){
-            throw new InvalidInputException("Telefon raqam +998 dan boshlanishi va uzunligi 11 ta bolishi kerak");
+        if(!user.getPhoneNumber().startsWith("+998") || user.getPhoneNumber().length() != 13){
+            throw new InvalidInputException("Telefon raqam +998 dan boshlanishi va uzunligi 13 ta bolishi kerak");
         }
         if(user.getPassword().length() < 6){
             throw new InvalidInputException("Parol uzunligi kamida 6 ta belgidan iborat bolishi kerak");
