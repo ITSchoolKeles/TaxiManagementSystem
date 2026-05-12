@@ -6,6 +6,7 @@ import enums.UserType;
 import exceptions.DataAlreadyException;
 import exceptions.FormatException;
 import exceptions.InvalidInputException;
+import exceptions.LoginException;
 import interfaces.AuthService;
 import service.AuthServiceImpl;
 
@@ -52,7 +53,24 @@ public class TaxiManagementSystem {
     }
 
     public static void login() {
+        System.out.println("------------------------------------------");
         System.out.println("Bu login sahifasi");
+        System.out.println("------------------------------------------");
+
+        // phone Number va paroll
+
+        System.out.print("Telefon raqamingizni kiriting -> ");
+        String phoneNumber = textScanner.nextLine();
+
+        System.out.print("Parolni kiriting -> ");
+        String password = textScanner.nextLine();
+
+        try {
+            currentUser = authService.login(phoneNumber, password);
+        }catch (InvalidInputException | LoginException e){
+            System.err.println(e.getMessage());
+        }
+        System.out.println("Login muvaffaqqiyatli amalga oshirildi");
     }
 
     public static void register() {
