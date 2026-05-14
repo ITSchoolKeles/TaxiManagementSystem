@@ -79,4 +79,9 @@ public class AuthServiceImpl implements AuthService {
     }
     // barcha userlarni aylanamiz phoneNUmber mavjud bo'lsa exception otamiz
 
+    @Override
+    public ArrayList<User> getUsers() {
+        return usersDatabase;
+           }
+
 }

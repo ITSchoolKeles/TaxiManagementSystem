@@ -9,8 +9,11 @@ import exceptions.InvalidInputException;
 import exceptions.LoginException;
 import interfaces.AuthService;
 import service.AuthServiceImpl;
+import utils.Database;
 
+import javax.xml.crypto.Data;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -71,6 +74,19 @@ public class TaxiManagementSystem {
             System.err.println(e.getMessage());
         }
         System.out.println("Login muvaffaqqiyatli amalga oshirildi");
+
+        switch (currentUser.getUserType()){
+            case ADMIN -> adminDashboard();
+            case USER -> userDashboard();
+            case DRIVER -> driverDashboard();
+        }
+    }
+
+    private static void userDashboard() {
+    }
+
+    private static void driverDashboard() {
+        
     }
 
     public static void register() {
@@ -214,5 +230,71 @@ public class TaxiManagementSystem {
         }
         int chooseYourCar = getMenuNumber("Choose your car ");
         return cars[chooseYourCar - 1];
+    }
+
+    public static void adminDashboard() {
+        System.out.println("-------------------------------------------");
+        System.out.println("|       Admin menusiga xushkelibsiz       |");
+        System.out.println("-------------------------------------------");
+        System.out.println();
+        System.out.println("1. Region and City");
+        System.out.println("2. All users");
+        System.out.println("3. Travel history");
+        System.out.println("4. Driver history");
+        System.out.println("5. User history");
+        System.out.println("6. Profile");
+        System.out.println("0. Back");
+        System.out.println();
+
+        int adminMenuNumber = getMenuNumberInSafeWay("Admin menu raqam kiriting");
+        
+        switch (adminMenuNumber){
+            case 1 -> regionAndCity();
+            case 2 -> allUsers();
+            case 3 -> travelHistory();
+            case 4 -> driverHistory();
+            case 5 -> userHistory();
+            case 6 -> profile();
+            case 0 -> {
+                return;
+            }
+        }
+        
+
+    }
+
+    private static void profile() {
+    }
+
+    private static void userHistory() {
+        
+    }
+
+    private static void travelHistory() {
+        
+    }
+
+    private static void allUsers() {
+        System.out.println("-------------------------------------------");
+        System.out.println("|        Barcha foydalanuvchilar          |");
+        System.out.println("-------------------------------------------");
+        System.out.println();
+
+        ArrayList<User> users = authService.getUsers();
+
+        for (User user : users) {
+            System.out.println(user);
+            System.out.println("------------------------------------------------------------------------------------------------------------------------------");
+        }
+        System.out.println();
+        adminDashboard();
+    }
+
+    private static void driverHistory() {
+        
+    }
+
+    private static void regionAndCity() {
+        
     }
 }
