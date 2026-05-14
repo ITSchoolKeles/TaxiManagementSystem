@@ -8,10 +8,10 @@ import exceptions.FormatException;
 import exceptions.InvalidInputException;
 import exceptions.LoginException;
 import interfaces.AuthService;
+import interfaces.RegionService;
 import service.AuthServiceImpl;
-import utils.Database;
+import service.RegionServiceImpl;
 
-import javax.xml.crypto.Data;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -21,6 +21,7 @@ public class TaxiManagementSystem {
     private static final Scanner numberScanner = new Scanner(System.in);
     private static final Scanner textScanner = new Scanner(System.in);
     private static final AuthService authService = new AuthServiceImpl();
+    private static final RegionService regionService = new RegionServiceImpl();
     private static User currentUser = null;
 
     public static void main(String[] args) {
@@ -70,12 +71,12 @@ public class TaxiManagementSystem {
 
         try {
             currentUser = authService.login(phoneNumber, password);
-        }catch (InvalidInputException | LoginException e){
+        } catch (InvalidInputException | LoginException e) {
             System.err.println(e.getMessage());
         }
         System.out.println("Login muvaffaqqiyatli amalga oshirildi");
 
-        switch (currentUser.getUserType()){
+        switch (currentUser.getUserType()) {
             case ADMIN -> adminDashboard();
             case USER -> userDashboard();
             case DRIVER -> driverDashboard();
@@ -86,7 +87,7 @@ public class TaxiManagementSystem {
     }
 
     private static void driverDashboard() {
-        
+
     }
 
     public static void register() {
@@ -233,6 +234,28 @@ public class TaxiManagementSystem {
     }
 
     public static void adminDashboard() {
+        boolean isBack = true;
+        while (isBack) {
+            displayAdminDashboard();
+            int adminMenuNumber = getMenuNumberInSafeWay("Admin menu raqam kiriting");
+            switch (adminMenuNumber) {
+                case 1 -> regionAndCity();
+                case 2 -> allUsers();
+                case 3 -> travelHistory();
+                case 4 -> driverHistory();
+                case 5 -> userHistory();
+                case 6 -> profile();
+                case 0 -> {
+                    isBack = false;
+                    return;
+                }
+            }
+        }
+
+
+    }
+
+    private static void displayAdminDashboard() {
         System.out.println("-------------------------------------------");
         System.out.println("|       Admin menusiga xushkelibsiz       |");
         System.out.println("-------------------------------------------");
@@ -245,33 +268,17 @@ public class TaxiManagementSystem {
         System.out.println("6. Profile");
         System.out.println("0. Back");
         System.out.println();
-
-        int adminMenuNumber = getMenuNumberInSafeWay("Admin menu raqam kiriting");
-        
-        switch (adminMenuNumber){
-            case 1 -> regionAndCity();
-            case 2 -> allUsers();
-            case 3 -> travelHistory();
-            case 4 -> driverHistory();
-            case 5 -> userHistory();
-            case 6 -> profile();
-            case 0 -> {
-                return;
-            }
-        }
-        
-
     }
 
     private static void profile() {
     }
 
     private static void userHistory() {
-        
+
     }
 
     private static void travelHistory() {
-        
+
     }
 
     private static void allUsers() {
@@ -287,14 +294,83 @@ public class TaxiManagementSystem {
             System.out.println("------------------------------------------------------------------------------------------------------------------------------");
         }
         System.out.println();
-        adminDashboard();
     }
 
     private static void driverHistory() {
-        
+
     }
 
     private static void regionAndCity() {
-        
+        boolean isBack = true;
+        while (isBack) {
+            displayRegionAndCityMenu();
+            int getRegionMenuNumber = getMenuNumberInSafeWay("Region va City menulardan birini tanlang: ");
+            switch (getRegionMenuNumber) {
+                case 1 -> allRegions();
+                case 2 -> addRegion();
+                case 3 -> addCity();
+                case 4 -> editRegion();
+                case 5 -> editCity();
+                case 0 -> {
+                    isBack = false;
+                    return;
+                }
+
+            }
+        }
+    }
+
+    private static void editCity() {
+
+    }
+
+    private static void editRegion() {
+
+    }
+
+    private static void addCity() {
+
+    }
+
+    private static void addRegion() {
+        System.out.println("Region qo'shish menusi");
+        System.out.print("Yangi region nomini kiriting -> ");
+        String regionName = textScanner.nextLine();
+
+        try{
+            regionService.addRegion(regionName);
+        }catch (DataAlreadyException | InvalidInputException e){
+            System.err.println(e.getMessage());
+        }
+        System.out.println("Region muvafaqqiyatli qo'shildi");
+
+
+    }
+
+    private static void allRegions() {
+        System.out.println("Barcha regionlar");
+
+        for (int i = 0; i < regionService.getAllRegions().size(); i++) {
+            System.out.println((i + 1) + ". " + regionService.getAllRegions().get(i).getName());
+            System.out.println("-----Shaharlari--------");
+            for(int j = 0; j < regionService.getAllRegions().get(i).getCities().size(); j++){
+                System.out.println("\t" + (j + 1) + ". " + regionService.getAllRegions().get(i).getCities().get(j).getName());
+            }
+        }
+
+    }
+
+    public static void displayRegionAndCityMenu() {
+        System.out.println("-----------------------------------------");
+        System.out.println("|       Region va City menusi            |");
+        System.out.println("-----------------------------------------");
+        System.out.println();
+        System.out.println("1. Regionlarni ko'rsatish");
+        System.out.println("2. Region qo'shish");
+        System.out.println("3. City qo'shish");
+        System.out.println("4. Region nomini o'zgartirish");
+        System.out.println("5. City nomini o'zgartirish");
+        System.out.println("0. Back");
+        System.out.println();
     }
 }

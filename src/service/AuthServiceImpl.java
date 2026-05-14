@@ -81,7 +81,13 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ArrayList<User> getUsers() {
-        return usersDatabase;
-           }
+        ArrayList<User> users = new ArrayList<>();
+        for (User user : usersDatabase) {
+            if (user.getUserType() != UserType.ADMIN) {
+                users.add(user);
+            }
+        }
+        return users;
+    }
 
 }
