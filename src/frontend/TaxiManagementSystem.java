@@ -1,15 +1,16 @@
 package frontend;
 
+import classes.City;
+import classes.Region;
 import classes.User;
 import enums.Car;
 import enums.UserType;
-import exceptions.DataAlreadyException;
-import exceptions.FormatException;
-import exceptions.InvalidInputException;
-import exceptions.LoginException;
+import exceptions.*;
 import interfaces.AuthService;
+import interfaces.CityService;
 import interfaces.RegionService;
 import service.AuthServiceImpl;
+import service.CityServiceImpl;
 import service.RegionServiceImpl;
 
 import java.math.BigDecimal;
@@ -22,6 +23,7 @@ public class TaxiManagementSystem {
     private static final Scanner textScanner = new Scanner(System.in);
     private static final AuthService authService = new AuthServiceImpl();
     private static final RegionService regionService = new RegionServiceImpl();
+    private static final CityService cityService = new CityServiceImpl();
     private static User currentUser = null;
 
     public static void main(String[] args) {
@@ -321,14 +323,84 @@ public class TaxiManagementSystem {
     }
 
     private static void editCity() {
+         ArrayList<City> allCities = cityService.getCities();
+
+         for(int i = 0; i < allCities.size(); i++) {
+             System.out.println((i +1) + "." + allCities.get(i).getRegion().getName() + "---" + allCities.get(i).getName());
+         }
+         int cityNumber = getMenuNumberInSafeWay("Tegishli shaharlardan birini tanlang: ");
+         City city = allCities.get(cityNumber - 1);
+
+        System.out.print("Yangi shahar nomini kiriting -> ");
+        String updatedCityName = textScanner.nextLine();
+
+        if(updatedCityName.equalsIgnoreCase(city.getName())){
+            return;
+        }
+        try{
+            cityService.editCity(city.getId(), updatedCityName);
+        }catch(DataNotFound | DataAlreadyException | InvalidInputException e){
+            System.err.println(e.getMessage());
+            return;
+        }
+        System.out.println("Shahar nomi muvaffaqqiyatli saqlanidi");
+
 
     }
 
     private static void editRegion() {
+        Region region = getRegion();
+        System.out.print("Yangi region nomini kiriting -> ");
+        String updatedName = textScanner.nextLine();
 
+        if(updatedName.equalsIgnoreCase(region.getName())) {
+            return;
+        }
+        try{
+            regionService.editRegion(region.getId(), updatedName);
+        }catch (DataAlreadyException | DataNotFound | InvalidInputException e){
+            System.err.println(e.getMessage());
+            return;
+        }
+        System.out.println("Region nomi muvaffaqqiyatli saqlanidi");
+    }
+
+    private static Region getRegion() {
+        ArrayList<Region> allRegions = regionService.getAllRegions();
+        for (int i = 0; i < allRegions.size(); i++) {
+            System.out.println((i + 1) + ". " + allRegions.get(i).getName());
+        }
+        int regionNumber = getMenuNumberInSafeWay("Tegishli regionlardan birini tanlang: ");
+        return allRegions.get(regionNumber - 1);
     }
 
     private static void addCity() {
+        // City qo'shish
+// Region tanlashni
+// City qo'shish
+// City Serice bilan boglaymiz
+
+        // Regionlarni ko'rsatish
+        Region region = getRegion();
+
+        System.out.print("Yangi shahar nomini kiriting -> ");
+        String cityName = textScanner.nextLine();
+
+
+        City newCity = new City();
+        newCity.setName(cityName);
+        newCity.setRegion(region);
+
+
+        try{
+            cityService.addCity(newCity);
+        }catch (InvalidInputException | DataAlreadyException e){
+            System.err.println(e.getMessage());
+            return;
+        };
+        System.out.println("Yangi shahar muvaffaqiyatli qo'shildi!");
+
+
 
     }
 
@@ -374,3 +446,5 @@ public class TaxiManagementSystem {
         System.out.println();
     }
 }
+
+

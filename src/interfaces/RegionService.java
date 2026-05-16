@@ -9,4 +9,5 @@ public interface RegionService {
     void addRegion(String name);
     void editRegion(UUID id, String name);
     ArrayList<Region> getAllRegions();
+    Region getRegionById(UUID id);
 }
