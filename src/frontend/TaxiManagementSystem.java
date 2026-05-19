@@ -9,9 +9,8 @@ import exceptions.*;
 import interfaces.AuthService;
 import interfaces.CityService;
 import interfaces.RegionService;
-import service.AuthServiceImpl;
-import service.CityServiceImpl;
-import service.RegionServiceImpl;
+import interfaces.ProfileService;
+import service.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -24,6 +23,7 @@ public class TaxiManagementSystem {
     private static final AuthService authService = new AuthServiceImpl();
     private static final RegionService regionService = new RegionServiceImpl();
     private static final CityService cityService = new CityServiceImpl();
+    private static final ProfileService profileService = new ProfileServiceImpl();
     private static User currentUser = null;
 
     public static void main(String[] args) {
@@ -75,6 +75,7 @@ public class TaxiManagementSystem {
             currentUser = authService.login(phoneNumber, password);
         } catch (InvalidInputException | LoginException e) {
             System.err.println(e.getMessage());
+            return; //Qolib ketibdi exeption ushlangan ammo ortga qaytilmagan va dastur toxtab qolyabdi
         }
         System.out.println("Login muvaffaqqiyatli amalga oshirildi");
 
@@ -113,6 +114,7 @@ public class TaxiManagementSystem {
     }
 
     private static void registerUser() {
+        System.out.println();
         System.out.println("-------------------------------------------");
         System.out.println("|  Bu userni ro'yxatdan o'tkazish menusi  |");
         System.out.println("-------------------------------------------");
@@ -273,6 +275,61 @@ public class TaxiManagementSystem {
     }
 
     private static void profile() {
+        displeyProfileMenu();
+        int profileMenuNumber = getMenuNumber("Profile menu raqamini kiriting");
+        System.out.println();
+
+        switch (profileMenuNumber) {
+            case 1 -> showProfileInfo();
+            case 2 -> editProfile();
+            case 3 -> changePassword();
+            case 4 -> addBalance();
+            case 5 -> {
+                return;
+            }
+        }
+
+    }
+
+    private static void showProfileInfo() {
+        profileService.showProfileInfo(currentUser);
+    }
+
+    private static void editProfile() {
+        System.out.print("Yangi ismni kiriting: ");
+        String newName = textScanner.nextLine();
+
+        try {
+            profileService.editProfile(currentUser, newName);
+        } catch (InvalidInputException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    private static void changePassword() {
+        System.out.print("Eski parolni kiriting: ");
+        String oldingiParol = textScanner.nextLine();
+
+        System.out.print("Yangi parolni kiriting: ");
+        String yangiParol = textScanner.nextLine();
+
+        try {
+            profileService.changePassword(currentUser, oldingiParol, yangiParol);
+        } catch (InvalidInputException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    private static void addBalance() {
+        System.out.print("Qo`shmoqchi bo`lgan summangizni kiriting: ");
+
+        try {
+            double amount = textScanner.nextDouble();
+
+            profileService.addBalance(currentUser, BigDecimal.valueOf(amount));
+        } catch (InvalidInputException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     private static void userHistory() {
@@ -445,6 +502,17 @@ public class TaxiManagementSystem {
         System.out.println("0. Back");
         System.out.println();
     }
+
+    public static void displeyProfileMenu(){
+        System.out.println("---------------------------------------------");
+        System.out.println("|             Profile Menusi                |");
+        System.out.println("---------------------------------------------");
+        System.out.println();
+        System.out.println("1. Profil ma'lumotlarini ko'rish");
+        System.out.println("2. Ismni o'zgartirish");
+        System.out.println("3. Parolni o`zgartirish");
+        System.out.println("4. Balansni to`ldirish");
+        System.out.println("0. Back");
+        System.out.println();
+    }
 }
-
-

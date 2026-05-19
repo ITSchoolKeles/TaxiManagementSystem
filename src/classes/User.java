@@ -100,8 +100,9 @@ public class User {
                 "id=" + id +
                 ", fullName='" + fullName + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
+                ", password='" + password + '\'' +
                 ", userType=" + userType +
-                ", balance=" + balance +
+                ", balance=" + (balance != null ? balance : "Yo'q") +
                 ", car=" + (car != null ? car : "Yo'q") +
                 '}';
     }
