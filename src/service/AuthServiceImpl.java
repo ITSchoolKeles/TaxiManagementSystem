@@ -8,6 +8,7 @@ import exceptions.LoginException;
 import interfaces.AuthService;
 import utils.Database;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -19,7 +20,7 @@ public class AuthServiceImpl implements AuthService {
                         UUID.randomUUID(),
                         "Admin",
                         "+998999999999",
-                        null,
+                        BigDecimal.ZERO,
                         UserType.ADMIN,
                         null,
                         "ea1202"
@@ -58,7 +59,6 @@ public class AuthServiceImpl implements AuthService {
             throw new InvalidInputException("Parol uzunligi kamida 6 ta belgidan iborat bolishi kerak");
         }
 
-        // Phone numberni mavjudligiga tekshiramiz
         User userByPhoneNumber = getUserByPhoneNumber(user.getPhoneNumber());
         if(userByPhoneNumber != null){
             throw new DataAlreadyException("Bunday telefon raqam %s allaqachon mavjud".formatted(user.getPhoneNumber()));
